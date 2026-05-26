@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model WorkType {
+  id          Int            @id @default(autoincrement())
+  name        String         @unique @db.VarChar(120)
+  defaultUnit String         @map("default_unit") @db.VarChar(16)
+  isActive    Boolean        @default(true) @map("is_active")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  entries     JournalEntry[]
+
+  @@map("work_types")
+}
+
+model JournalEntry {
+  id           Int      @id @default(autoincrement())
+  workDate     DateTime @map("work_date") @db.Date
+  workTypeId   Int      @map("work_type_id")
+  workType     WorkType @relation(fields: [workTypeId], references: [id], onDelete: Restrict)
+  volume       Decimal  @db.Decimal(10, 2)
+  unit         String   @db.VarChar(16)
+  executorName String   @map("executor_name") @db.VarChar(120)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([workDate])
+  @@index([workTypeId])
+  @@map("journal_entries")
+}

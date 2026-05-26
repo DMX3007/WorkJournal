@@ -1,0 +1,51 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: wj-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-work_journal}
+      MYSQL_USER: ${MYSQL_USER:-app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-app_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_password}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  backend:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    container_name: wj-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: "mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-app_password}@mysql:3306/${MYSQL_DATABASE:-work_journal}"
+      DATABASE_HOST: mysql
+      DATABASE_USER: ${MYSQL_USER:-app}
+      DATABASE_PASSWORD: ${MYSQL_PASSWORD:-app_password}
+      DATABASE_NAME: ${MYSQL_DATABASE:-work_journal}
+      CORS_ORIGIN: "http://localhost:3000"
+    ports:
+      - "3001:3001"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    # На старте: применить миграции, засидить справочник, запустить сервер
+    command: >
+      sh -c "
+        npx prisma migrate deploy &&
+        npx prisma db seed &&
+        node dist/src/main.js
+      "
+
+volumes:
+  mysql_data:
