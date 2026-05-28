@@ -1,5 +1,5 @@
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { PrismaClient } from "../../generated/prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const adapter = new PrismaMariaDb({
     host: process.env.DATABASE_HOST,
@@ -7,6 +7,7 @@ const adapter = new PrismaMariaDb({
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
     connectionLimit: 5,
+    allowPublicKeyRetrieval: true,  // development only, for production use proper SSL and remove this option
 });
 const prisma = new PrismaClient({ adapter });
 
