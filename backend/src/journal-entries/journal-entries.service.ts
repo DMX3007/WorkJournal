@@ -45,8 +45,8 @@ export class JournalEntriesService {
             this.prisma.journalEntry.findMany({
                 where,
                 orderBy,
-                skip: (page - 1) * limit,
-                take: limit,
+                skip: (page - 1) * limit || 0,
+                take: limit || 0,
                 include: { workType: true },
             }),
         ]);
