@@ -1,20 +1,23 @@
 'use client';
 
 import { format, parseISO } from 'date-fns';
-import { ArrowDown, ArrowUp } from 'lucide-react';
+import { ArrowDown, ArrowUp, Pencil, Trash2 } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import type { JournalEntry } from '@/lib/types';
 
 interface Props {
     entries: JournalEntry[];
     sort: 'date_asc' | 'date_desc';
     onSortToggle: () => void;
+    onDelete: (entry: JournalEntry) => void;
 }
 
 function formatVolume(value: number): string {
     return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2 }).format(value);
 }
 
-export function JournalTable({ entries, sort, onSortToggle }: Props) {
+export function JournalTable({ entries, sort, onSortToggle, onDelete }: Props) {
     const SortIcon = sort === 'date_desc' ? ArrowDown : ArrowUp;
 
     return (
@@ -29,7 +32,7 @@ export function JournalTable({ entries, sort, onSortToggle }: Props) {
                         </th>
                         <th className="text-left font-medium text-muted-foreground text-xs py-3 px-3">Вид работ</th>
                         <th className="text-right font-medium text-muted-foreground text-xs py-3 px-3 w-30">Объём</th>
-                        <th className="text-left font-medium text-muted-foreground text-xs py-3 px-3 w-50">ФИО исполнителя</th>
+                        <th className="text-left font-medium text-muted-foreground text-xs py-3 px-3 w-50">Исполнитель</th>
                         <th className="w-25" />
                     </tr>
                 </thead>
@@ -45,6 +48,9 @@ export function JournalTable({ entries, sort, onSortToggle }: Props) {
                             </td>
                             <td className="py-3 px-3">{entry.executorName}</td>
                             <td className="py-3 px-3 text-right">
+                                <Button variant="ghost" size="icon" onClick={() => onDelete(entry)} aria-label="Удалить">
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
                             </td>
                         </tr>
                     ))}
