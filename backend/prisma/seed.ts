@@ -1,14 +1,14 @@
 import { prisma } from "./lib/prisma.js";
 
 const WORK_TYPES = [
-    { name: 'Работа 1', defaultUnit: 'м³' },
-    { name: 'Работа 2', defaultUnit: 'м²' },
-    { name: 'Работа 3', defaultUnit: 'м³' },
-    { name: 'Работа 4', defaultUnit: 'т' },
-    { name: 'Работа 5', defaultUnit: 'м²' },
-    { name: 'Работа 6', defaultUnit: 'м²' },
-    { name: 'Работа 7', defaultUnit: 'шт' },
-    { name: 'Работа 8', defaultUnit: 'п.м.' },
+    { name: 'Кладка перегородок', defaultUnit: 'м³' },
+    { name: 'Монтаж опалубки', defaultUnit: 'м²' },
+    { name: 'Установка окон', defaultUnit: 'м³' },
+    { name: 'Выравнивание поверхностей', defaultUnit: 'т' },
+    { name: 'Установка дверей', defaultUnit: 'м²' },
+    { name: 'Монтаж кровли', defaultUnit: 'м²' },
+    { name: 'Установка радиаторов', defaultUnit: 'шт' },
+    { name: 'Прокладка коммуникаций', defaultUnit: 'п.м.' },
 ] as const;
 
 async function main() {
